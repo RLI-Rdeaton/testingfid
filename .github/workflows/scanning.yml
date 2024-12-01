@@ -8,7 +8,7 @@ env:
   REGISTRY: docker.io
   IMAGE_NAME: ${{ vars.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:latest
   CURRENT_VERSION_TAG: "7.4.8"
-  MITRE_SAF_VERSION: "1.4.11"
+  MITRE_SAF_VERSION: "1.4.16"
   REPORTING_REPO: ${{ secrets.GH_REPO }}
   REPORTING_OWNER: ${{ secrets.GH_ACCT }}
   #IMAGE_NAME: ${{ secrets.REPO_PATH }}/fid:7.4.12-hotfix.2
@@ -120,7 +120,6 @@ jobs:
         run: |
           set -eu
           saf convert hdf2csv -i ${{ env.OUTPUT_NAME }}.hdf.json -o ${{ env.OUTPUT_NAME }}.csv
-          echo ${{ env.REPORTING_OWNER }}
       -
         name: Upload reports
         if: success() || failure() # always run even if the previous step fails
@@ -153,7 +152,7 @@ jobs:
         name: Push to Reporting Repo
         run: |
           cd ${{ env.REPORTING_REPO }}
-          git remote set-url origin https://x-access-token:${{ secrets.INTERNAL_PAT }}@github.com/${{ secrets.GH_ACCT }}/${{ secrets.GH_REPO }}.git
+          git remote set-url origin https://x-access-token:${{ secrets.INTERNAL_PAT }}@github.com/${{ env.REPORTING_OWNER }}/${{ secrets.GH_REPO }}.git
           git push
 
   trufflehog:
@@ -244,7 +243,7 @@ jobs:
         name: Push to Reporting Repo
         run: |
           cd ${{ env.REPORTING_REPO }}
-          git remote set-url origin https://x-access-token:${{ secrets.INTERNAL_PAT }}@github.com/${{ secrets.GH_ACCT }}/${{ secrets.GH_REPO }}.git
+          git remote set-url origin https://x-access-token:${{ secrets.INTERNAL_PAT }}@github.com/${{ env.REPORTING_OWNER }}/${{ secrets.GH_REPO }}.git
           git push
 
   grype:
@@ -328,7 +327,7 @@ jobs:
         name: Push to Reporting Repo
         run: |
           cd ${{ env.REPORTING_REPO }}
-          git remote set-url origin https://x-access-token:${{ secrets.INTERNAL_PAT }}@github.com/${{ secrets.GH_ACCT }}/${{ secrets.GH_REPO }}.git
+          git remote set-url origin https://x-access-token:${{ secrets.INTERNAL_PAT }}@github.com/${{ env.REPORTING_OWNER }}/${{ secrets.GH_REPO }}.git
           git push
 
   trivy:
@@ -437,7 +436,7 @@ jobs:
         name: Push to Reporting Repo
         run: |
           cd ${{ env.REPORTING_REPO }}
-          git remote set-url origin https://x-access-token:${{ secrets.INTERNAL_PAT }}@github.com/${{ secrets.GH_ACCT }}/${{ secrets.GH_REPO }}.git
+          git remote set-url origin https://x-access-token:${{ secrets.INTERNAL_PAT }}@github.com/${{ env.REPORTING_OWNER }}/${{ secrets.GH_REPO }}.git
           git push
 
   snyk:
@@ -523,7 +522,7 @@ jobs:
         name: Push to Reporting Repo
         run: |
           cd ${{ env.REPORTING_REPO }}
-          git remote set-url origin https://x-access-token:${{ secrets.INTERNAL_PAT }}@github.com/${{ secrets.GH_ACCT }}/${{ secrets.GH_REPO }}.git
+          git remote set-url origin https://x-access-token:${{ secrets.INTERNAL_PAT }}@github.com/${{ env.REPORTING_OWNER }}/${{ secrets.GH_REPO }}.git
           git push
 
   clam:
@@ -610,5 +609,5 @@ jobs:
         name: Push to Reporting Repo
         run: |
           cd ${{ env.REPORTING_REPO }}
-          git remote set-url origin https://x-access-token:${{ secrets.INTERNAL_PAT }}@github.com/${{ secrets.GH_ACCT }}/${{ secrets.GH_REPO }}.git
+          git remote set-url origin https://x-access-token:${{ secrets.INTERNAL_PAT }}@github.com/${{ env.REPORTING_OWNER }}/${{ secrets.GH_REPO }}.git
           git push
