@@ -2,7 +2,7 @@ name: daily-build-and-scan
 
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "0 0 * * *"
 
 env:
   REGISTRY: docker.io
@@ -146,9 +146,11 @@ jobs:
           if [[ ! -d ./${{ env.REPORTING_REPO }}/${{ github.event.repository.name }}/ ]]; then
             echo "Project directory does not exist.  Creating."
             mkdir -p ./${{ env.REPORTING_REPO }}/${{ github.event.repository.name }}/
+            ls -latr ./${{ env.REPORTING_REPO }}/${{ github.event.repository.name }}/
           fi
           cp "./${{ env.OUTPUT_NAME }}.csv" "./${{ env.REPORTING_REPO }}/${{ github.event.repository.name }}/${{ env.OUTPUT_NAME }}.csv"
           cd ./${{ env.REPORTING_REPO }}/${{ github.event.repository.name }}
+          echo "Did we get here?"
           git config --global user.email ${{ secrets.GH_EMAIL }}
           git config --global user.name ${{ secrets.GH_NAME }}
           git add "${{ env.OUTPUT_NAME }}.csv"
