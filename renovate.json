@@ -19,6 +19,9 @@
                     "matchManagers": [
                         "custom.regex"
                     ],
+                    "recreateWhen": [
+                        "always"
+                    ],
                     "automerge": true,
                     "ignoreTests": true
                 },
