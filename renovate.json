@@ -19,7 +19,8 @@
                     "matchManagers": [
                         "custom.regex"
                     ],
-                    "automerge": true
+                    "automerge": true,
+                    "ignoreTests": true
                 },
                 {
                     "matchDatasources": [
