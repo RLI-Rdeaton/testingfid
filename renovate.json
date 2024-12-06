@@ -48,6 +48,9 @@
                     "matchUpdateTypes": [
                         "patch",
                         "minor"
+                    ],
+                    "recreateWhen": [
+                        "always"
                     ]
                 }
             ]
