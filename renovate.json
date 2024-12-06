@@ -8,30 +8,51 @@
     "prHourlyLimit": 10,
     "packageRules": [
         {
-          "matchPackageNames": ["*"],
-          "schedule": ["before 10am"]
+            "matchPackageNames": [
+                "*"
+            ],
+            "schedule": [
+                "before 10am"
+            ]
         },
         {
-          "packageRules": [
-            {
-              "matchDatasources": ["npm"],
-              "matchPackageNames": ["saf"],  // or
-              "matchManagers": ["custom.regex"], // or
-              "automerge": true
-            },
-            {
-              "matchDatasources": ["docker"],
-              "matchDepNames": ["alpine"],  // or
-              "automerge": true
-            },
-            {
-              "matchDatasources": ["docker"],
-              "matchDepNames": ["docker.io/radiantone/fid"],  // or
-              "matchUpdateTypes": ["patch", "minor"]
-            }
-          ]
+            "packageRules": [
+                {
+                    "matchDatasources": [
+                        "npm"
+                    ],
+                    "matchPackageNames": [
+                        "saf"
+                    ],
+                    "matchManagers": [
+                        "custom.regex"
+                    ],
+                    "automerge": true
+                },
+                {
+                    "matchDatasources": [
+                        "docker"
+                    ],
+                    "matchDepNames": [
+                        "alpine"
+                    ],
+                    "automerge": true
+                },
+                {
+                    "matchDatasources": [
+                        "docker"
+                    ],
+                    "matchDepNames": [
+                        "docker.io/radiantone/fid"
+                    ],
+                    "matchUpdateTypes": [
+                        "patch",
+                        "minor"
+                    ]
+                }
+            ]
         }
-      ],
+    ],
     "customManagers": [
         {
             "customType": "regex",
