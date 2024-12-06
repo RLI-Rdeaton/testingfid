@@ -21,9 +21,14 @@
             },
             {
               "matchDatasources": ["docker"],
-              "matchPackageNames": ["alpine"],  // or
+              "matchDepNames": ["alpine"],  // or
               "automerge": true
             },
+            {
+              "matchDatasources": ["docker"],
+              "matchDepNames": ["docker.io/radiantone/fid"],  // or
+              "matchUpdateTypes": ["patch", "minor"]
+            }
           ]
         }
       ],
