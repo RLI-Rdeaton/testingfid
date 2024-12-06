@@ -65,7 +65,7 @@
                         "minor"
                     ],
                     "recreateWhen": [
-                        "always
+                        "always"
                     ]
                 }
             ]
