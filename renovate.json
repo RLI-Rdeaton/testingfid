@@ -8,14 +8,6 @@
     "prHourlyLimit": 10,
     "packageRules": [
         {
-            "matchPackageNames": [
-                "*"
-            ],
-            "schedule": [
-                "before 10am"
-            ]
-        },
-        {
             "packageRules": [
                 {
                     "matchDatasources": [
