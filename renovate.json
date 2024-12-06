@@ -50,7 +50,22 @@
                         "minor"
                     ],
                     "recreateWhen": [
-                        "always"
+                        "always
+                    ]
+                },
+                {
+                    "matchDatasources": [
+                        "docker"
+                    ],
+                    "matchDepNames": [
+                        "docker.io/radiantone/fid"
+                    ],
+                    "matchUpdateTypes": [
+                        "patch",
+                        "minor"
+                    ],
+                    "recreateWhen": [
+                        "always
                     ]
                 }
             ]
