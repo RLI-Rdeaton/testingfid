@@ -8,63 +8,92 @@
     "prHourlyLimit": 10,
     "packageRules": [
         {
-            "packageRules": [
-                {
-                    "matchDatasources": [
-                        "npm"
-                    ],
-                    "matchDepNames": [
-                        "@mitre/saf"
-                    ],
-                    "matchManagers": [
-                        "custom.regex"
-                    ],
-                    "recreateWhen": [
-                        "always"
-                    ],
-                    "automerge": true,
-                    "ignoreTests": true
-                },
-                {
-                    "matchDatasources": [
-                        "docker"
-                    ],
-                    "matchDepNames": [
-                        "alpine"
-                    ],
-                    "automerge": true
-                },
-                {
-                    "matchDatasources": [
-                        "docker"
-                    ],
-                    "matchDepNames": [
-                        "radiantone/fid"
-                    ],
-                    "matchUpdateTypes": [
-                        "patch",
-                        "minor"
-                    ],
-                    "recreateWhen": [
-                        "always"
-                    ]
-                },
-                {
-                    "matchDatasources": [
-                        "docker"
-                    ],
-                    "matchDepNames": [
-                        "docker.io/radiantone/fid"
-                    ],
-                    "matchUpdateTypes": [
-                        "patch",
-                        "minor"
-                    ],
-                    "recreateWhen": [
-                        "always"
-                    ]
-                }
-            ]
+            "matchDatasources": [
+                "npm"
+            ],
+            "matchDepNames": [
+                "@mitre/saf"
+            ],
+            "matchManagers": [
+                "custom.regex"
+            ],
+            "recreateWhen": "always",
+            "automerge": true,
+            "ignoreTests": true
+        },
+        {
+            "matchDatasources": [
+                "docker"
+            ],
+            "matchDepNames": [
+                "alpine"
+            ],
+            "recreateWhen": "always",
+            "automerge": true,
+            "ignoreTests": true
+        },
+        {
+            "matchDatasources": [
+                "github-releases"
+            ],
+            "matchDepNames": [
+                "ComplianceAsCode/content",
+                "chainguard-dev/stigs"
+            ],
+            "matchManagers": [
+                "custom.regex"
+            ],
+            "recreateWhen": "always",
+            "automerge": true,
+            "ignoreTests": true
+        },
+        {
+            "matchDatasources": [
+                "github-tags"
+            ],
+            "matchDepNames": [
+                "actions/upload-artifact",
+                "docker/login-action",
+                "docker/setup-buildx-action",
+                "docker/build-push-action",
+                "GuillaumeFalourd/clone-github-repo-action"
+            ],
+            "recreateWhen": "always",
+            "automerge": true,
+            "ignoreTests": true
+        },
+        {
+            "matchDatasources": [
+                "docker"
+            ],
+            "matchDepNames": [
+              "radiantone/fid",
+              "docker.io/radiantone/fid"
+            ],
+            "matchUpdateTypes": [
+                "patch"
+            ],
+            "recreateWhen": "always",
+            "automerge": true,
+            "ignoreTests": true
+        },
+        {
+            "matchDatasources": [
+                "docker"
+            ],
+            "matchDepNames": [
+                "radiantone/fid",
+                "docker.io/radiantone/fid"
+            ],
+            "matchManagers": [
+                "custom.regex"
+            ],
+            "matchUpdateTypes": [
+                "patch"
+            ],
+            "recreateWhen": "always",
+            "automerge": true,
+            "ignoreTests": true
         }
     ],
     "customManagers": [
