@@ -16,16 +16,16 @@ jobs:
     steps:
       -
         name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v3.3.0
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
         name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v3.8.0
       -
         name: Build image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v6.10.0
         with:
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ env.CURRENT_VERSION_TAG }}, ${{ vars.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:latest
@@ -56,19 +56,10 @@ jobs:
           unzip "${SSG_DIR}/wolfi.zip" -d "${SSG_DIR}"
       -
         name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v3.3.0
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-#      -
-#        name: Login to Docker Hub
-#        uses: docker/login-action@v3
-#        with:
-#          registry: ${{ secrets.REPO_FQDN }}
-#          username: ${{ secrets.REPO_USERNAME }}
-#          password: ${{ secrets.REPO_TOKEN }}
-        # oscap-docker requires the image to have been pulled
-        # docker pull "${IMAGE_NAME}"
       -
         name: Pull the docker image to scan
         run: |
@@ -120,7 +111,7 @@ jobs:
       -
         name: Upload reports
         if: success() || failure() # always run even if the previous step fails
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4
+        uses: actions/upload-artifact@v4.5.0
         with:
           name: openscap-results
           path: |
@@ -155,7 +146,14 @@ jobs:
           git config --global user.name ${{ secrets.GH_NAME }}
           git add "${{ env.OUTPUT_NAME }}.csv"
           git pull
-          git commit -m "Update ${{ env.TOOL }} results in ${{ github.event.repository.name }}"
+          git commit -m "Update ${{ env.TOOL }} results in ${{ github.event.repository.name }}" --dry-run > check.txt 2>&1 | true
+          if grep 'nothing added to commit' check.txt; then
+            rm check.txt
+            exit 0
+          else
+            rm check.txt
+            git commit -m "Update ${{ env.TOOL }} results in ${{ github.event.repository.name }}"
+          fi
       -
         name: Push to Reporting Repo
         run: |
@@ -181,19 +179,10 @@ jobs:
           sudo curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sudo sh -s -- -b /usr/local/bin
       -
         name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v3.3.0
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-#      -
-#        name: Login to Docker Hub
-#        uses: docker/login-action@v3
-#        with:
-#          registry: ${{ secrets.REPO_FQDN }}
-#          username: ${{ secrets.REPO_USERNAME }}
-#          password: ${{ secrets.REPO_TOKEN }}
-      #CONT_ID=$(docker create ${{ env.IMAGE_NAME }})
-      #CONT_ID=$(docker create node:8.11)
       -
         name: Create, export, then extract to the filesystem
         run: |
@@ -222,7 +211,7 @@ jobs:
       -
         name: Upload reports
         if: success() || failure() # always run even if the previous step fails
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4
+        uses: actions/upload-artifact@v4.5.0
         with:
           name: trufflehog-results
           path: |
@@ -252,13 +241,18 @@ jobs:
         run: |
           cp "./${{ env.OUTPUT_NAME }}.csv" "./${{ secrets.GH_REPO }}/${{ github.event.repository.name }}/${{ env.OUTPUT_NAME }}.csv"
           cd ./${{ secrets.GH_REPO }}/${{ github.event.repository.name }}
-          echo "CONFIG USER EMAIL"
           git config --global user.email ${{ secrets.GH_EMAIL }}
-          echo "CONFIG USER NAME"
           git config --global user.name ${{ secrets.GH_NAME }}
           git add "${{ env.OUTPUT_NAME }}.csv"
           git pull
-          git commit -m "Update ${{ env.TOOL }} results in ${{ github.event.repository.name }}"
+          git commit -m "Update ${{ env.TOOL }} results in ${{ github.event.repository.name }}" --dry-run > check.txt 2>&1 | true
+          if grep 'nothing added to commit' check.txt; then
+            rm check.txt
+            exit 0
+          else
+            rm check.txt
+            git commit -m "Update ${{ env.TOOL }} results in ${{ github.event.repository.name }}"
+          fi
       -
         name: Push to Reporting Repo
         run: |
@@ -282,20 +276,10 @@ jobs:
           npm install -g "@mitre/saf@${{ env.MITRE_SAF_VERSION }}"
       -
         name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v3.3.0
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-#      -
-#        name: Login to Docker Hub
-#        uses: docker/login-action@v3
-#        with:
-#          registry: ${{ secrets.REPO_FQDN }}
-#          username: ${{ secrets.REPO_USERNAME }}
-#          password: ${{ secrets.REPO_TOKEN }}
-      # grype chainguard/wolfi-base -o json --file grype-results.json
-      # grype ${{ env.IMAGE_NAME }} -o json  --file "${{ env.OUTPUT_NAME }}.json"
-      # grype redhat/ubi9:9.4 -o json --file "${{ env.OUTPUT_NAME }}.json"sxxxxxxxxxxxxxxxdwq
       -
         name: Grype scan
         run: |
@@ -317,7 +301,7 @@ jobs:
       -
         name: Upload reports
         if: success() || failure() # always run even if the previous step fails
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4
+        uses: actions/upload-artifact@v4.5.0
         with:
           name: ${{ env.OUTPUT_NAME }}
           path: |
@@ -354,7 +338,14 @@ jobs:
           git config --global user.name ${{ secrets.GH_NAME }}
           git add "${{ env.OUTPUT_NAME }}.csv"
           git pull
-          git commit -m "Update ${{ env.TOOL }} results in ${{ github.event.repository.name }}"
+          git commit -m "Update ${{ env.TOOL }} results in ${{ github.event.repository.name }}" --dry-run > check.txt 2>&1 | true
+          if grep 'nothing added to commit' check.txt; then
+            rm check.txt
+            exit 0
+          else
+            rm check.txt
+            git commit -m "Update ${{ env.TOOL }} results in ${{ github.event.repository.name }}"
+          fi
       -
         name: Push to Reporting Repo
         run: |
@@ -364,9 +355,6 @@ jobs:
 
   trivy:
     needs: build
-    permissions:
-      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
-      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
     runs-on: ubuntu-latest
     env:
       TOOL: "trivy"
@@ -388,20 +376,10 @@ jobs:
           npm install -g "@mitre/saf@${{ env.MITRE_SAF_VERSION }}"
       -
         name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v3.3.0
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-#      -
-#        name: Login to Docker Hub
-#        uses: docker/login-action@v3
-#        with:
-#          registry: ${{ secrets.REPO_FQDN }}
-#          username: ${{ secrets.REPO_USERNAME }}
-#          password: ${{ secrets.REPO_TOKEN }}
-      #image-ref: ${{ env.IMAGE_NAME }}
-      # image-ref: 'redhat/ubi9:9.4'
-      #image-ref: radiantone/fid:7.4.9
       -
         name: Scan image
         run: |
@@ -431,16 +409,13 @@ jobs:
           else
             echo "THERE ARE FINDINGS, GENERATING HDF AND CSV"
             saf convert trivy2hdf -i ${{ env.OUTPUT_NAME }}.json -o ${{ env.OUTPUT_NAME }}
-            ls -latr
-            echo "OKAY WHAT"
-            ls ${{ github.workspace }}/${{ env.OUTPUT_NAME }} -latr
             cp '${{ github.workspace }}/${{ env.OUTPUT_NAME }}/aquasecurity - aquasecurity.json' ${{ github.workspace }}/${{ env.OUTPUT_NAME }}.hdf.json
             saf convert hdf2csv -i ${{ env.OUTPUT_NAME }}.hdf.json -o ${{ env.OUTPUT_NAME }}.csv
           fi
       -
         name: Upload reports
         if: success() || failure() # always run even if the previous step fails
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4
+        uses: actions/upload-artifact@v4.5.0
         with:
           name: trivy-results
           path: |
@@ -475,7 +450,14 @@ jobs:
           git config --global user.name ${{ secrets.GH_NAME }}
           git add "${{ env.OUTPUT_NAME }}.csv"
           git pull
-          git commit -m "Update ${{ env.TOOL }} results in ${{ github.event.repository.name }}"
+          git commit -m "Update ${{ env.TOOL }} results in ${{ github.event.repository.name }}" --dry-run > check.txt 2>&1 | true
+          if grep 'nothing added to commit' check.txt; then
+            rm check.txt
+            exit 0
+          else
+            rm check.txt
+            git commit -m "Update ${{ env.TOOL }} results in ${{ github.event.repository.name }}"
+          fi
       -
         name: Push to Reporting Repo
         run: |
@@ -502,22 +484,12 @@ jobs:
           npm install -g "@mitre/saf@${{ env.MITRE_SAF_VERSION }}"
       -
         name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v3.3.0
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-#      -
-#        name: Login to Docker Hub
-#        uses: docker/login-action@v3
-#        with:
-#          registry: ${{ secrets.REPO_FQDN }}
-#          username: ${{ secrets.REPO_USERNAME }}
-#          password: ${{ secrets.REPO_TOKEN }}
       -
         name: Scan using Snyk
-        continue-on-error: true
-        # 'redhat/ubi9:9.4'
-        # ${{ env.IMAGE_NAME }}
         run: |
           snyk container test ${{ env.IMAGE_NAME }} --app-vulns --nested-jars-depth=5 --json --json-file-output=${{ env.OUTPUT_NAME }}.json || true
       -
@@ -537,7 +509,7 @@ jobs:
       -
         name: Upload reports
         if: success() || failure() # always run even if the previous step fails
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4
+        uses: actions/upload-artifact@v4.5.0
         with:
           name: snyk-results
           path: |
@@ -572,7 +544,14 @@ jobs:
           git config --global user.name ${{ secrets.GH_NAME }}
           git add "${{ env.OUTPUT_NAME }}.csv"
           git pull
-          git commit -m "Update ${{ env.TOOL }} results in ${{ github.event.repository.name }}"
+          git commit -m "Update ${{ env.TOOL }} results in ${{ github.event.repository.name }}" --dry-run > check.txt 2>&1 | true
+          if grep 'nothing added to commit' check.txt; then
+            rm check.txt
+            exit 0
+          else
+            rm check.txt
+            git commit -m "Update ${{ env.TOOL }} results in ${{ github.event.repository.name }}"
+          fi
       -
         name: Push to Reporting Repo
         run: |
@@ -597,19 +576,10 @@ jobs:
           db_daily: 'true'
       -
         name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v3.3.0
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-#      -
-#        name: Login to Docker Hub
-#        uses: docker/login-action@v3
-#        with:
-#          registry: ${{ secrets.REPO_FQDN }}
-#          username: ${{ secrets.REPO_USERNAME }}
-#          password: ${{ secrets.REPO_TOKEN }}
-      # CONT_ID=$(docker create ${{ env.IMAGE_NAME }})
-      # CONT_ID=$(docker create modusmundi/eicartest:1.0.0)
       -
         name: Create, export, then extract to the filesystem
         run: |
@@ -636,7 +606,7 @@ jobs:
       -
         name: Upload reports
         if: success() || failure() # always run even if the previous step fails
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4
+        uses: actions/upload-artifact@v4.5.0
         with:
           name: clamd-results
           path: |
@@ -670,7 +640,14 @@ jobs:
           git config --global user.name ${{ secrets.GH_NAME }}
           git add "${{ env.OUTPUT_NAME }}.csv"
           git pull
-          git commit -m "Update ${{ env.TOOL }} results in ${{ github.event.repository.name }}"
+          git commit -m "Update ${{ env.TOOL }} results in ${{ github.event.repository.name }}" --dry-run > check.txt 2>&1 | true
+          if grep 'nothing added to commit' check.txt; then
+            rm check.txt
+            exit 0
+          else
+            rm check.txt
+            git commit -m "Update ${{ env.TOOL }} results in ${{ github.event.repository.name }}"
+          fi
       -
         name: Push to Reporting Repo
         run: |
