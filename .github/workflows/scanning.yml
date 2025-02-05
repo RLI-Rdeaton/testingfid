@@ -2,8 +2,7 @@ name: daily-build-and-scan
 
 on:
   schedule:
-    #- cron: "0 0 * * *"
-    - cron: "*/10 * * * *"
+    - cron: "0 0 * * *"
 
 env:
   CURRENT_VERSION_TAG: "7.4.12"
@@ -195,7 +194,6 @@ jobs:
       -
         name: Trufflehog scan
         run: |
-          trufflehog filesystem ${{ github.workspace }}/${{ env.DIR_NAME }} --no-update --only-verified --json --force-skip-archives > foo.json
           trufflehog filesystem ${{ github.workspace }}/${{ env.DIR_NAME }} --no-update --only-verified --json --force-skip-archives | grep -wE "\{\"SourceMetadata\":" | jq --slurp . > ${{ env.OUTPUT_NAME }}.json
       -
        name: Make the Trufflehog JSON into an HDF file OR make a stub file
@@ -217,7 +215,6 @@ jobs:
         with:
           name: trufflehog-results
           path: |
-            foo.json
             ${{ env.OUTPUT_NAME }}.json
             ${{ env.OUTPUT_NAME }}.hdf.json
             ${{ env.OUTPUT_NAME }}.csv
