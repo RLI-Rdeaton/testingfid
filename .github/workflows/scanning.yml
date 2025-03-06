@@ -662,7 +662,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       EXPORT_NAME: "build.tar"
-      DIR_NAME: "build"      
+      DIR_NAME: "build"
       TOOL: "unpacked-grype"
       OUTPUT_NAME: "unpacked-grype-results"
     steps:
@@ -691,7 +691,7 @@ jobs:
         name: What's in the DIR?
         run: |
           set -eu
-          ls ${{ github.workspace }}/${{ env.DIR_NAME }}
+          ls ${{ github.workspace }}/${{ env.DIR_NAME }}/opt/radiantone
       #-
       #  name: Extract FID install and ZK
       #  run: |
