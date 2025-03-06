@@ -688,15 +688,15 @@ jobs:
           docker export ${CONT_ID} -o ${{ env.EXPORT_NAME }}
           tar --exclude='dev/null' --exclude='dev/random' --exclude='dev/urandom' --exclude='dev/zero' -xvf ${{ env.EXPORT_NAME }} -C ${{ github.workspace }}/${{ env.DIR_NAME }}
       -
+        name: Extract FID install and ZK
+        run: |
+          set -eu
+          tar -xvf ${{ github.workspace }}/${{ env.DIR_NAME }}/opt/radiantone/installer.tar.gz
+      -
         name: What's in the DIR?
         run: |
           set -eu
           ls ${{ github.workspace }}/${{ env.DIR_NAME }}/opt/radiantone
-      #-
-      #  name: Extract FID install and ZK
-      #  run: |
-      #    set -eu
-      #    tar -xvf ${{ github.workspace }}/${{ env.DIR_NAME }}
       -
         name: Upload reports
         if: success() || failure() # always run even if the previous step fails
