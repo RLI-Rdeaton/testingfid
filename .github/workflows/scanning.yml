@@ -654,3 +654,53 @@ jobs:
           cd ${{ secrets.GH_REPO }}
           git remote set-url origin https://x-access-token:${{ secrets.INTERNAL_PAT }}@github.com/${{ secrets.GH_ACCT }}/${{ secrets.GH_REPO }}.git
           git push
+
+
+  unpacked-grype:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      TOOL: "unpacked-grype"
+      OUTPUT_NAME: "unpacked-grype-results"
+    steps:
+      -
+        name: Install prerequisites
+        run: |
+          set -eu
+          sudo apt-get install -y npm
+          npm install -g "@mitre/saf@${{ env.MITRE_SAF_VERSION }}"
+          sudo curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sudo sh -s -- -b /usr/local/bin
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v3.3.0
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Create, export, then extract to the filesystem
+        run: |
+          set -eu
+          mkdir -p ${{ env.DIR_NAME }}
+          CONT_ID=$(docker create ${{ env.IMAGE_NAME }})
+          docker export ${CONT_ID} -o ${{ env.EXPORT_NAME }}
+          tar --exclude='dev/null' --exclude='dev/random' --exclude='dev/urandom' --exclude='dev/zero' -xvf ${{ env.EXPORT_NAME }} -C ${{ github.workspace }}/${{ env.DIR_NAME }}
+      -
+        name: What's in the DIR?
+        run: |
+          set -eu
+          ls ${{ github.workspace }}/${{ env.DIR_NAME }}
+      #-
+      #  name: Extract FID install and ZK
+      #  run: |
+      #    set -eu
+      #    tar -xvf ${{ github.workspace }}/${{ env.DIR_NAME }}
+      -
+        name: Upload reports
+        if: success() || failure() # always run even if the previous step fails
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: trufflehog-results
+          path: |
+            ${{ env.OUTPUT_NAME }}.json
+            ${{ env.OUTPUT_NAME }}.hdf.json
+            ${{ env.OUTPUT_NAME }}.csv
