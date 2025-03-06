@@ -661,6 +661,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     env:
+      EXPORT_NAME: "build.tar"
+      DIR_NAME: "build"      
       TOOL: "unpacked-grype"
       OUTPUT_NAME: "unpacked-grype-results"
     steps:
