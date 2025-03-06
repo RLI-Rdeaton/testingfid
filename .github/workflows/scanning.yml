@@ -697,7 +697,7 @@ jobs:
         name: Extract FID install and ZK
         run: |
           set -eu
-          tar -xvf ${{ github.workspace }}/${{ env.DIR_NAME }}/opt/radiantone/installer.tar.gz
+          tar -xvf ${{ github.workspace }}/${{ env.DIR_NAME }}/opt/radiantone/installer.tar.gz -C ${{ github.workspace }}/${{ env.DIR_NAME }}/opt/radiantone/
       -
         name: What's in the DIR?
         run: |
