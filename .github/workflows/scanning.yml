@@ -4,7 +4,8 @@ on:
   schedule:
     #- cron: "0 0 * * *"
     - cron: "*/5 * * * *"
-
+    
+# Let's see if this forces the action!
 env:
   CURRENT_VERSION_TAG: "7.4.13"
   #github.event.repository.name is a special environment variable that gives us the repo name.  There isn't great documentation on it.
